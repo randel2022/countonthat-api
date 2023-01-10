@@ -8,6 +8,6 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
+Runs the app in the development mode.
 
-The scripts will reload when you make changes.\
+The scripts will reload when you make changes.
