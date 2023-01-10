@@ -65,7 +65,7 @@ app.get("/api/hello", (req, res) => {
 
 // All other GET requests not handled before will return our React app
 app.get('*', (req, res) => {
-    res.sendFile(resolve(__dirname, '../build', 'index.html'));
+    res.status(404).send("Page not found!");
 });
 
 app.listen(PORT, () => {
