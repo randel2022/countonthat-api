@@ -24,21 +24,21 @@ app.post("/api/calculator", (req, res) => {
     const { dream, assets, liabilities, monthlyRevenue, monthlyExpense } = req.body;
 
     if (!dream) {
-        res.status(401).json({
+        return res.status(422).json({
             status : false,
             message :'Dream is required.'
         });
     }
 
     if (!assets) {
-        res.status(401).json({
+        return res.status(422).json({
             status : false,
             message :'Assets is required.'
         });
     }
 
     if (!liabilities) {
-        res.status(401).json({
+        return res.status(422).json({
             status : false,
             message :'Liabilities is required.'
         });
@@ -54,18 +54,18 @@ app.post("/api/calculator", (req, res) => {
 
     var calc = new Calculator(initial, dreamModel);
 
-    res.json({
+    return res.json({
         data: calc.getComputation()
     });
 });
 
 app.get("/api/hello", (req, res) => {
-    res.status(200).send("Hello World!");
+    return res.status(200).send("Hello World!");
 });
 
 // All other GET requests not handled before will return our React app
 app.get('*', (req, res) => {
-    res.status(404).send("Page not found!");
+    return res.status(404).send("Page not found!");
 });
 
 app.listen(PORT, () => {
