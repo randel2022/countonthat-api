@@ -27,33 +27,21 @@ app.post("/api/calculator", (req, res) => {
     const { dream, assets, liabilities, monthlyRevenue, monthlyExpense } = req.body;
 
     if (!dream) {
-<<<<<<< HEAD
-        return res.status(401).json({
-=======
         return res.status(422).json({
->>>>>>> ee9e7009ff082d7838eeae75794181d56e22fd36
             status : false,
             message :'Dream is required.'
         });
     }
 
     if (!assets) {
-<<<<<<< HEAD
-        return res.status(401).json({
-=======
         return res.status(422).json({
->>>>>>> ee9e7009ff082d7838eeae75794181d56e22fd36
             status : false,
             message :'Assets is required.'
         });
     }
 
     if (!liabilities) {
-<<<<<<< HEAD
-        return res.status(401).json({
-=======
         return res.status(422).json({
->>>>>>> ee9e7009ff082d7838eeae75794181d56e22fd36
             status : false,
             message :'Liabilities is required.'
         });
