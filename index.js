@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -13,7 +14,9 @@ const __dirname = dirname(__filename);
 
 const PORT = process.env.PORT || 5000;
 
-const app = express();
+const app = express(); 
+app.use(cors())
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -24,21 +27,21 @@ app.post("/api/calculator", (req, res) => {
     const { dream, assets, liabilities, monthlyRevenue, monthlyExpense } = req.body;
 
     if (!dream) {
-        res.status(401).json({
+        return res.status(401).json({
             status : false,
             message :'Dream is required.'
         });
     }
 
     if (!assets) {
-        res.status(401).json({
+        return res.status(401).json({
             status : false,
             message :'Assets is required.'
         });
     }
 
     if (!liabilities) {
-        res.status(401).json({
+        return res.status(401).json({
             status : false,
             message :'Liabilities is required.'
         });
@@ -54,7 +57,7 @@ app.post("/api/calculator", (req, res) => {
 
     var calc = new Calculator(initial, dreamModel);
 
-    res.json({
+    return res.json({
         data: calc.getComputation()
     });
 });
