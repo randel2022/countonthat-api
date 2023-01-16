@@ -1,5 +1,6 @@
 import { Assets } from "./models/assets.js";
 import { Dream } from "./models/dream.js";
+import { Item } from "./models/item.js";
 import { YearlyValue } from "./models/yearly-value.js";
 
 export class Calculator {
@@ -15,10 +16,23 @@ export class Calculator {
         var initialAssets = this.initial.assets;
         var initialLiabilities = this.initial.liabilities;
 
-        var assets = new Assets(initialAssets.cash, initialAssets.home, (initialAssets.investments * 1.1), (initialAssets.businessValue * 1.2), initialAssets.other);
+        var assets = new Assets(
+            new Item(initialAssets.cash.value, initialAssets.cash.multiplier), 
+            new Item(initialAssets.home.value, initialAssets.home.multiplier), 
+            new Item(initialAssets.investments.getNextValue(), initialAssets.investments.multiplier), 
+            new Item(initialAssets.businessValue.getNextValue(), initialAssets.businessValue.multiplier), 
+            new Item(initialAssets.other.value, initialAssets.other.multiplier)
+        );
 
-        var monthlyRevenue = this.initial.monthlyRevenue * 1.2;
-        var monthlyExpense = this.initial.monthlyExpense * 1.1;
+        var monthlyRevenue = new Item(
+            this.initial.monthlyRevenue.getNextValue(),
+            this.initial.monthlyRevenue.multiplier
+        );
+
+        var monthlyExpense = new Item(
+            this.initial.monthlyExpense.getNextValue(),
+            this.initial.monthlyExpense.multiplier
+        );
 
         var financiallyTowardsDream = assets.totalAssets / this.dream.totalDream;
 
@@ -43,15 +57,30 @@ export class Calculator {
         var prevAssets = data.assets;
         var prevLiabilities = data.liabilities;
 
-        var cash = prevAssets.cash + data.annualNet;
+        var cash = new Item(
+            prevAssets.cash.value + data.annualNet,
+            prevAssets.cash.multiplier
+        );
 
-        var newAssets = new Assets(cash, undefined, (prevAssets.investments * 1.1), (prevAssets.businessValue * 1.2), undefined);
+        var newAssets = new Assets(
+            cash, 
+            undefined, 
+            new Item(prevAssets.investments.getNextValue(), prevAssets.investments.multiplier), 
+            new Item(prevAssets.businessValue.getNextValue(), prevAssets.businessValue.multiplier), 
+            undefined
+        );
 
-        var monthlyRevenue = data.monthlyRevenue * 1.2;
-        var monthlyExpense = data.monthlyExpense * 1.1;
+        var monthlyRevenue = new Item(
+            data.monthlyRevenue.getNextValue(),
+            data.monthlyRevenue.multiplier
+        );
+
+        var monthlyExpense = new Item(
+            data.monthlyExpense.getNextValue(),
+            data.monthlyExpense.multiplier
+        );
 
         var financiallyTowardsDream = newAssets.totalAssets / this.dream.totalDream;
-
 
         var retVal = new YearlyValue(newAssets, prevLiabilities, monthlyRevenue, monthlyExpense, financiallyTowardsDream);
 
@@ -60,17 +89,17 @@ export class Calculator {
 
     getComputation() {
         return {
-            initial: this.initial,
-            yearOne: this.yearOne,
-            yearTwo: this.yearTwo,
-            yearThree: this.yearThree,
-            yearFour: this.yearFour,
-            yearFive: this.yearFive,
-            yearSix: this.yearSix,
-            yearSeven: this.yearSeven,
-            yearEight: this.yearEight,
-            yearNine: this.yearNine,
-            yearTen: this.yearTen,
+            initial: this.initial.toFormat(),
+            yearOne: this.yearOne.toFormat(),
+            yearTwo: this.yearTwo.toFormat(),
+            yearThree: this.yearThree.toFormat(),
+            yearFour: this.yearFour.toFormat(),
+            yearFive: this.yearFive.toFormat(),
+            yearSix: this.yearSix.toFormat(),
+            yearSeven: this.yearSeven.toFormat(),
+            yearEight: this.yearEight.toFormat(),
+            yearNine: this.yearNine.toFormat(),
+            yearTen: this.yearTen.toFormat(),
         };
     }
 }

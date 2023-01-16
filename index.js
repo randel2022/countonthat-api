@@ -7,6 +7,7 @@ import { Calculator } from "./calculator.js";
 import { YearlyValue } from "./models/yearly-value.js";
 import { Assets } from "./models/assets.js";
 import { Liabilities } from "./models/liabilities.js";
+import { Item } from "./models/item.js";
 import { Dream } from "./models/dream.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -47,13 +48,45 @@ app.post("/api/calculator", (req, res) => {
         });
     }
 
+    if (!monthlyRevenue) {
+        return res.status(422).json({
+            status : false,
+            message :'Monthly Revenue is required.'
+        });
+    }
+
+    if (!monthlyExpense) {
+        return res.status(422).json({
+            status : false,
+            message :'Monthly Expense is required.'
+        });
+    }
+
     var dreamModel = new Dream(dream.education, dream.savings, dream.vehicle, dream.home, dream.investments);
-    var assetsModel = new Assets(assets.cash, assets.home, assets.investments, assets.businessValue, assets.other);
-    var liabilitiesModel = new Liabilities(liabilities.mortgage, liabilities.credit, liabilities.studentDebt);
+    
+    var assetsModel = new Assets(
+        new Item(assets.cash.value, assets.cash.multiplier), 
+        new Item(assets.home.value, assets.home.multiplier),
+        new Item(assets.investments.value, assets.investments.multiplier), 
+        new Item(assets.businessValue.value, assets.businessValue.multiplier), 
+        new Item(assets.other.value, assets.other.multiplier)
+    );
+
+    var liabilitiesModel = new Liabilities(
+        new Item(liabilities.mortgage.value, liabilities.mortgage.multiplier), 
+        new Item(liabilities.creditCard.value, liabilities.creditCard.multiplier), 
+        new Item(liabilities.studentDebt.value, liabilities.studentDebt.multiplier)
+    );
 
     var financiallyTowardsDream = assetsModel.totalAssets / dreamModel.totalDream;
 
-    var initial = new YearlyValue(assetsModel, liabilitiesModel, monthlyRevenue, monthlyExpense, financiallyTowardsDream);
+    var initial = new YearlyValue(
+        assetsModel, 
+        liabilitiesModel, 
+        new Item(monthlyRevenue.value, monthlyRevenue.multiplier), 
+        new Item(monthlyExpense.value, monthlyExpense.multiplier), 
+        financiallyTowardsDream
+    );
 
     var calc = new Calculator(initial, dreamModel);
 
