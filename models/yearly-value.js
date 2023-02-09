@@ -1,38 +1,55 @@
-import { Assets } from "./assets.js";
 import { Item } from "./item.js";
-import { Liabilities } from "./liabilities.js";
+import { Calculator } from "../calculator.js";
 
 export class YearlyValue {
-    constructor(assets = new Assets(), liabilities = new Liabilities(), monthlyRevenue = new Item(), monthlyExpense = new Item(), financiallyTowardsDream = 0) {
+    constructor(assets = [], liabilities = [], monthlyRevenue = new Item(), monthlyExpense = new Item(), financiallyTowardsDream = 0) {
         this.assets = assets;
         this.liabilities = liabilities;
         this.monthlyRevenue = monthlyRevenue;
         this.monthlyExpense = monthlyExpense;
 
+        var totalAssets = this.computeListTotalValue(assets);
+
         this.monthlyNet = this.monthlyRevenue.value - this.monthlyExpense.value;
         this.annualNet = this.monthlyNet * 12;
 
-        this.netWorth = this.assets.totalAssets + this.annualNet;
+        this.netWorth = totalAssets + this.annualNet;
 
         this.financiallyTowardsDream = financiallyTowardsDream;
     }
 
+    computeListTotalValue(items) {
+        var value = 0;
+        items.forEach(element => {
+            value += element.value
+        });
+
+        return value;
+    }
+
     toFormat() {
+
+        // var tempAssets = [];
+        var tempAssets = {};
+        var assetsTotal = 0;
+        this.assets.forEach(element => {
+            // tempAssets.push({
+            //     [element.name] : Math.round(element.value)
+            // })
+            assetsTotal += element.value
+            tempAssets[element.name] = Math.round(element.value)
+        });
+        tempAssets['totalAssets'] = Math.round(assetsTotal)
+
+
+        var tempLiabilities = {};
+        this.liabilities.forEach(element => {
+            tempLiabilities[element.name] = Math.round(element.value)
+        });
+
         return {
-            "assets": {
-                "cash": Math.round(this.assets.cash.value),
-                "home": Math.round(this.assets.home.value),
-                "investments": Math.round(this.assets.investments.value),
-                "businessValue": Math.round(this.assets.businessValue.value),
-                "others": Math.round(this.assets.other.value),
-                "totalAssets": Math.round(this.assets.totalAssets)
-            },
-            "liabilities": {
-                "mortgage" : Math.round(this.liabilities.mortgage.value),
-                "creditCard": Math.round(this.liabilities.creditCard.value),
-                "studentDebt": Math.round(this.liabilities.studentDebt.value),
-                "totalLiabilities": Math.round(this.liabilities.totalLiabilities)
-            },
+            "assets": tempAssets,
+            "liabilities": tempLiabilities,
             "monthlyRevenue": Math.round(this.monthlyRevenue.value),
             "monthlyExpense": Math.round(this.monthlyExpense.value),
             "monthlyNet": Math.round(this.monthlyNet),

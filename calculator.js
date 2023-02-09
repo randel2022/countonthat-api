@@ -1,14 +1,30 @@
-import { Assets } from "./models/assets.js";
-import { Dream } from "./models/dream.js";
 import { Item } from "./models/item.js";
 import { YearlyValue } from "./models/yearly-value.js";
 
 export class Calculator {
 
-    constructor(yearlyValue = new YearlyValue(), dream = new Dream()) {
-        this.initial = yearlyValue;
-        this.dream = dream;
+    constructor(goals = [], assets = [], liabilities = [], monthlyRevenue = new Item(), monthlyExpense = new Item()) {
+        this.goals = goals;
+        this.assets = assets;
+        this.liabilities = liabilities;
+        this.monthlyRevenue = monthlyRevenue;
+        this.monthlyExpense = monthlyExpense;
+        Object.setPrototypeOf(this.monthlyRevenue, Item.prototype);
+        Object.setPrototypeOf(this.monthlyExpense, Item.prototype);
+        this.parseListToItemClass(this.assets);
+        this.parseListToItemClass(this.liabilities);
 
+
+        var totalAssets = this.computeListTotalValue(this.assets);
+        var totalLiabilities = this.computeListTotalValue(this.liabilities);
+        var totalDream = this.computeListTotalValue(this.goals);
+
+        var financiallyTowardsDream = totalAssets / totalDream;
+        var initial = new YearlyValue(
+            assets, liabilities, monthlyRevenue, monthlyExpense, financiallyTowardsDream
+        );
+
+        this.initial = initial;
         this.setYearOne();
     }
 
@@ -16,32 +32,31 @@ export class Calculator {
         var initialAssets = this.initial.assets;
         var initialLiabilities = this.initial.liabilities;
 
-        var assets = new Assets(
-            new Item(initialAssets.cash.value, initialAssets.cash.multiplier), 
-            new Item(initialAssets.home.value, initialAssets.home.multiplier), 
-            new Item(initialAssets.investments.getNextValue(), initialAssets.investments.multiplier), 
-            new Item(initialAssets.businessValue.getNextValue(), initialAssets.businessValue.multiplier), 
-            new Item(initialAssets.other.value, initialAssets.other.multiplier)
-        );
-
         var monthlyRevenue = new Item(
+            undefined,
             this.initial.monthlyRevenue.getNextValue(),
             this.initial.monthlyRevenue.multiplier
         );
 
         var monthlyExpense = new Item(
+            undefined,
             this.initial.monthlyExpense.getNextValue(),
             this.initial.monthlyExpense.multiplier
         );
 
-        var financiallyTowardsDream = assets.totalAssets / this.dream.totalDream;
+        var totalAssets = this.computeListTotalValue(initialAssets);
+        var totalLiabilities = this.computeListTotalValue(initialLiabilities);
+        var totalDream = this.computeListTotalValue(this.goals);
 
-        this.yearOne = new YearlyValue(assets, initialLiabilities, monthlyRevenue, monthlyExpense, financiallyTowardsDream);
+        var financiallyTowardsDream = (totalAssets - totalLiabilities) / totalDream;
+
+        this.yearOne = new YearlyValue(initialAssets, initialLiabilities, monthlyRevenue, monthlyExpense, financiallyTowardsDream);
 
         this.setNextYears();
     }
 
     setNextYears() {
+        // this.yearOne = this.getNextYear(this.initial);
         this.yearTwo = this.getNextYear(this.yearOne);
         this.yearThree = this.getNextYear(this.yearTwo);
         this.yearFour = this.getNextYear(this.yearThree);
@@ -57,30 +72,27 @@ export class Calculator {
         var prevAssets = data.assets;
         var prevLiabilities = data.liabilities;
 
-        var cash = new Item(
-            prevAssets.cash.value + data.annualNet,
-            prevAssets.cash.multiplier
-        );
-
-        var newAssets = new Assets(
-            cash, 
-            undefined, 
-            new Item(prevAssets.investments.getNextValue(), prevAssets.investments.multiplier), 
-            new Item(prevAssets.businessValue.getNextValue(), prevAssets.businessValue.multiplier), 
-            undefined
-        );
+        var newAssets = this.getListNextValues(prevAssets);
+        this.addToCash(newAssets, data.annualNet);
+        var newLiabilities = this.getListNextValues(prevLiabilities);
 
         var monthlyRevenue = new Item(
+            undefined,
             data.monthlyRevenue.getNextValue(),
             data.monthlyRevenue.multiplier
         );
 
         var monthlyExpense = new Item(
+            undefined,
             data.monthlyExpense.getNextValue(),
             data.monthlyExpense.multiplier
         );
 
-        var financiallyTowardsDream = newAssets.totalAssets / this.dream.totalDream;
+        var totalAssets = this.computeListTotalValue(newAssets);
+        var totalLiabilities = this.computeListTotalValue(newLiabilities);
+        var totalDream = this.computeListTotalValue(this.goals);
+
+        var financiallyTowardsDream = (totalAssets - totalLiabilities) / totalDream;
 
         var retVal = new YearlyValue(newAssets, prevLiabilities, monthlyRevenue, monthlyExpense, financiallyTowardsDream);
 
@@ -100,6 +112,44 @@ export class Calculator {
             yearEight: this.yearEight.toFormat(),
             yearNine: this.yearNine.toFormat(),
             yearTen: this.yearTen.toFormat(),
-        };
+        }
+    }
+
+    getListNextValues(items) {
+        var list = [];
+        items.forEach(element => {
+            list.push(
+                new Item(
+                    element.name,
+                    element.getNextValue(),
+                    element.multiplier
+                )
+            );
+        });
+
+        return list;
+    }
+
+    addToCash(items, annualNet) {
+        items.forEach(element => {
+            if (element.name == 'cash') {
+                element.value = element.value + annualNet;
+            }
+        });
+    }
+
+    parseListToItemClass(items) {
+        items.forEach(element => {
+            Object.setPrototypeOf(element, Item.prototype);
+        });
+    }
+
+    computeListTotalValue(items) {
+        var value = 0;
+        items.forEach(element => {
+            value += element.value
+        });
+
+        return value;
     }
 }

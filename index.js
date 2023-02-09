@@ -4,11 +4,6 @@ import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { Calculator } from "./calculator.js";
-import { YearlyValue } from "./models/yearly-value.js";
-import { Assets } from "./models/assets.js";
-import { Liabilities } from "./models/liabilities.js";
-import { Item } from "./models/item.js";
-import { Dream } from "./models/dream.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -25,12 +20,12 @@ app.use(express.static(resolve(__dirname, '../build')));
 
 // Handle GET requests to /api route
 app.post("/api/calculator", (req, res) => {
-    const { dream, assets, liabilities, monthlyRevenue, monthlyExpense } = req.body;
+    const { goals, assets, liabilities, monthlyRevenue, monthlyExpense } = req.body;
 
-    if (!dream) {
+    if (!goals) {
         return res.status(422).json({
             status : false,
-            message :'Dream is required.'
+            message :'Goals is required.'
         });
     }
 
@@ -62,35 +57,10 @@ app.post("/api/calculator", (req, res) => {
         });
     }
 
-    var dreamModel = new Dream(dream.education, dream.savings, dream.vehicle, dream.home, dream.investments);
-    
-    var assetsModel = new Assets(
-        new Item(assets.cash.value, assets.cash.multiplier), 
-        new Item(assets.home.value, assets.home.multiplier),
-        new Item(assets.investments.value, assets.investments.multiplier), 
-        new Item(assets.businessValue.value, assets.businessValue.multiplier), 
-        new Item(assets.other.value, assets.other.multiplier)
-    );
+    var calc = new Calculator(goals, assets, liabilities, monthlyRevenue, monthlyExpense);
 
-    var liabilitiesModel = new Liabilities(
-        new Item(liabilities.mortgage.value, liabilities.mortgage.multiplier), 
-        new Item(liabilities.creditCard.value, liabilities.creditCard.multiplier), 
-        new Item(liabilities.studentDebt.value, liabilities.studentDebt.multiplier)
-    );
-
-    var financiallyTowardsDream = assetsModel.totalAssets / dreamModel.totalDream;
-
-    var initial = new YearlyValue(
-        assetsModel, 
-        liabilitiesModel, 
-        new Item(monthlyRevenue.value, monthlyRevenue.multiplier), 
-        new Item(monthlyExpense.value, monthlyExpense.multiplier), 
-        financiallyTowardsDream
-    );
-
-    var calc = new Calculator(initial, dreamModel);
-
-    return res.json({
+    return res.status(200).json({
+        status: true,
         data: calc.getComputation()
     });
 });
