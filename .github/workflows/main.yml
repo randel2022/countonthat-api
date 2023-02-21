@@ -1,0 +1,53 @@
+name: DreamWalk Backend Deployment
+run-name: Backend Deployment 🚀
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  Prepare-Environment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+  Project-Build:
+    needs: Prepare-Environment
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm install
+      - name: Copy whole project to Digital Ocean Dreamwalk Droplet via ssh key
+        uses: appleboy/scp-action@main
+        env:
+          HOST: ${{secrets.SSH_HOST}}
+          KEY: ${{secrets.SSH_KEY}}
+          USERNAME: ${{secrets.SSH_USERNAME}}
+        with:
+          source: "${{ github.workspace }}"
+          target: "/var/www/html/dreamwalk-backend"
+          strip_components: 2 # this is important
+      - name: Npm Install to Digital Ocean Dreamwalk Droplet via ssh key
+        uses: appleboy/ssh-action@main
+        env:
+          HOST: ${{secrets.SSH_HOST}}
+          KEY: ${{secrets.SSH_KEY}}
+          USERNAME: ${{secrets.SSH_USERNAME}}
+          script: |
+            npm i
+            pm2 start index.js
