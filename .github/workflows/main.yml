@@ -52,5 +52,6 @@ jobs:
           KEY: ${{secrets.SSH_KEY}}
           USERNAME: ${{secrets.SSH_USERNAME}}
           script: |
+            cd /var/www/html/dreamwalk-backend/
             npm i
             npm run db:migrate
