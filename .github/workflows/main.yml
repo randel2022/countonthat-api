@@ -1,5 +1,5 @@
 name: DreamWalk Backend Deployment
-run-name: Backend Deployment 🚀
+run-name: Backend Deployment 
 on:
   workflow_dispatch:
   push:
@@ -26,6 +26,9 @@ jobs:
         node-version: [16.x]
     steps:
       - uses: actions/checkout@v3
+      - name: "Create env file"
+        run: |
+          echo "${{ vars.DEVELOPMENT }}" > .env
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
