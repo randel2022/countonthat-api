@@ -50,4 +50,4 @@ jobs:
           USERNAME: ${{secrets.SSH_USERNAME}}
           script: |
             npm i
-            pm2 start index.js
+            npm run db:migrate
