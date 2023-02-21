@@ -1,5 +1,6 @@
 import { Item } from "./models/item.js";
 import { YearlyValue } from "./models/yearly-value.js";
+import { connection, insertGoals, insertAssets, insertLiabilities, insertRevenues, insertExpenses } from "./database/database.js";
 
 export class Calculator {
 
@@ -23,6 +24,8 @@ export class Calculator {
         var initial = new YearlyValue(
             assets, liabilities, monthlyRevenue, monthlyExpense, financiallyTowardsDream
         );
+
+        this.insertToDB();
 
         this.initial = initial;
         this.setYearOne();
@@ -152,4 +155,26 @@ export class Calculator {
 
         return value;
     }
+
+    insertToDB() {
+        connection.connect((err) => {
+            if (err) throw err;
+            console.log('Mysql Connected with App...');
+        })
+
+        let userId = this.getRandomInt(1, 99999);
+
+        insertGoals(connection, userId, this.goals);
+        insertAssets(connection, userId, this.assets);
+        insertLiabilities(connection, userId, this.liabilities);
+        insertRevenues(connection, userId, this.monthlyRevenue);
+        insertExpenses(connection, userId, this.monthlyExpense);
+        
+    }
+
+    getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
+      }
 }
