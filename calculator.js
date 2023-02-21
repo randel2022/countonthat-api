@@ -157,11 +157,6 @@ export class Calculator {
     }
 
     insertToDB() {
-        connection.connect((err) => {
-            if (err) throw err;
-            console.log('Mysql Connected with App...');
-        })
-
         let userId = this.getRandomInt(1, 99999);
 
         insertGoals(connection, userId, this.goals);
