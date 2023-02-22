@@ -39,13 +39,16 @@ export class YearlyValue {
             assetsTotal += element.value
             tempAssets[element.name] = Math.round(element.value)
         });
-        tempAssets['totalAssets'] = Math.round(assetsTotal)
+        tempAssets['totalAssets'] = Math.round(assetsTotal);
 
 
         var tempLiabilities = {};
+        var liabilitiesTotal = 0;
         this.liabilities.forEach(element => {
+            liabilitiesTotal += element.value
             tempLiabilities[element.name] = Math.round(element.value)
         });
+        tempLiabilities['totalLiabilities'] = liabilitiesTotal;
 
         return {
             "assets": tempAssets,
@@ -55,7 +58,7 @@ export class YearlyValue {
             "monthlyNet": Math.round(this.monthlyNet),
             "annualNet": Math.round(this.annualNet),
             "netWorth": Math.round(this.netWorth),
-            "financiallyTowardsDream": (this.financiallyTowardsDream * 100).toFixed(2) + "%"
+            "financiallyTowardsDream": parseFloat((this.financiallyTowardsDream * 100).toFixed(2))
         }
     }
 }

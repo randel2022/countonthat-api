@@ -26,8 +26,12 @@ function insertGoals(connection, userId, data) {
         sqlQuery,
         [data.map(item => [userId, item.name, item.value])],
         (error, results) => {
-            if(error) throw error
-            console.log('Goals inserted successfully.');
+            if(error) {
+                console.log('Error saving goals: ', error);
+            } else {
+                console.log('Goals inserted successfully.');
+            }
+            
         }
     );
 };
@@ -38,8 +42,11 @@ function insertAssets(connection, userId, data) {
         sqlQuery,
         [data.map(item => [userId, item.name, item.value, item.multiplier])],
         (error, results) => {
-            if(error) throw error
-            console.log('Assets inserted successfully.');
+            if(error) {
+                console.log('Error saving assets: ', error);
+            } else {
+                console.log('Assets inserted successfully.');
+            }
         }
     );
 };
@@ -50,8 +57,11 @@ function insertLiabilities(connection, userId, data) {
         sqlQuery,
         [data.map(item => [userId, item.name, item.value, item.multiplier])],
         (error, results) => {
-            if(error) throw error
-            console.log('Liabilities inserted successfully.');
+            if(error) {
+                console.log('Error saving liabilities: ', error);
+            } else {
+                console.log('Liabilities inserted successfully.');
+            }
         }
     );
 };
@@ -62,8 +72,11 @@ function insertRevenues(connection, userId, data) {
         sqlQuery,
         { user_id: userId, value: data.value, multiplier: data.multiplier },
         (error, results) => {
-            if(error) throw error
-            console.log('Revenues inserted successfully.');
+            if(error) {
+                console.log('Error saving revenues: ', error);
+            } else {
+                console.log('Revenues inserted successfully.');
+            }
         }
     );
 };
@@ -74,8 +87,11 @@ function insertExpenses(connection, userId, data) {
         sqlQuery,
         { user_id: userId, value: data.value, multiplier: data.multiplier },
         (error, results) => {
-            if(error) throw error
-            console.log('Expenses inserted successfully.');
+            if(error) {
+                console.log('Error saving expenses: ', error);
+            } else {
+                console.log('Expenses inserted successfully.');
+            }
         }
     );
 };
