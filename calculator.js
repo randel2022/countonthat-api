@@ -135,7 +135,7 @@ export class Calculator {
 
     addToCash(items, annualNet) {
         items.forEach(element => {
-            if (element.name == 'cash') {
+            if (element.name?.toLowerCase() == 'cash') {
                 element.value = element.value + annualNet;
             }
         });

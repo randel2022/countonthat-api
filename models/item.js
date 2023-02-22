@@ -8,7 +8,7 @@ export class Item {
     getNextValue() {
         var data = this. value * (this.multiplier / 10)
 
-        if(this.name == 'cash') {
+        if(this.name?.toLowerCase() == 'cash') {
             return this.value
         }
 
