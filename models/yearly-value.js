@@ -9,11 +9,12 @@ export class YearlyValue {
         this.monthlyExpense = monthlyExpense;
 
         var totalAssets = this.computeListTotalValue(assets);
+        var totalLiabilities = this.computeListTotalValue(liabilities);
 
         this.monthlyNet = this.monthlyRevenue.value - this.monthlyExpense.value;
         this.annualNet = this.monthlyNet * 12;
 
-        this.netWorth = totalAssets + this.annualNet;
+        this.netWorth = totalAssets + this.annualNet - totalLiabilities;
 
         this.financiallyTowardsDream = financiallyTowardsDream;
     }

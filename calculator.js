@@ -97,7 +97,7 @@ export class Calculator {
 
         var financiallyTowardsDream = (totalAssets - totalLiabilities) / totalDream;
 
-        var retVal = new YearlyValue(newAssets, prevLiabilities, monthlyRevenue, monthlyExpense, financiallyTowardsDream);
+        var retVal = new YearlyValue(newAssets, newLiabilities, monthlyRevenue, monthlyExpense, financiallyTowardsDream);
 
         return retVal;
     }
