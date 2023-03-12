@@ -1,4 +1,4 @@
-export class Item {
+class Item {
     constructor(name = "", value = 0, multiplier = 0) {
         this.name = name
         this.value = value;
@@ -19,3 +19,7 @@ export class Item {
         return this.value + data
     }
 }
+
+module.exports = {
+    Item
+};

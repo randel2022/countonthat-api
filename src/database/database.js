@@ -1,7 +1,5 @@
-import * as dotenv from 'dotenv'
-dotenv.config()
-
-import mysql from 'mysql';
+require('dotenv').config();
+var mysql = require('mysql');
 
 const dbPool = mysql.createPool({
     connectionLimit: 10,
@@ -96,4 +94,4 @@ function insertExpenses(connection, userId, data) {
     );
 };
 
-export { dbPool, connection, insertGoals, insertAssets, insertLiabilities, insertRevenues, insertExpenses };
+module.exports = { dbPool, connection, insertGoals, insertAssets, insertLiabilities, insertRevenues, insertExpenses };

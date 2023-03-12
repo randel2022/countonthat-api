@@ -1,7 +1,6 @@
-import { Item } from "./item.js";
-import { Calculator } from "../calculator.js";
+const { Item } = require('./item');
 
-export class YearlyValue {
+class YearlyValue {
     constructor(assets = [], liabilities = [], monthlyRevenue = new Item(), monthlyExpense = new Item(), financiallyTowardsDream = 0) {
         this.assets = assets;
         this.liabilities = liabilities;
@@ -62,4 +61,8 @@ export class YearlyValue {
             "financiallyTowardsDream": parseFloat((this.financiallyTowardsDream * 100).toFixed(2))
         }
     }
+}
+
+module.exports = {
+    YearlyValue
 }

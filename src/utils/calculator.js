@@ -1,8 +1,8 @@
-import { Item } from "./models/item.js";
-import { YearlyValue } from "./models/yearly-value.js";
-import { connection, insertGoals, insertAssets, insertLiabilities, insertRevenues, insertExpenses } from "./database/database.js";
+const { Item } = require('../models/item');
+const { YearlyValue } = require('../models/yearly-value');
+const { connection, insertGoals, insertAssets, insertLiabilities, insertRevenues, insertExpenses } = require('../database/database');
 
-export class Calculator {
+class Calculator {
 
     constructor(goals = [], assets = [], liabilities = [], monthlyRevenue = new Item(), monthlyExpense = new Item()) {
         this.goals = goals;
@@ -173,3 +173,7 @@ export class Calculator {
         return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
     }
 }
+
+module.exports = {
+    Calculator
+};
