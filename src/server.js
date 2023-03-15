@@ -1,71 +1,32 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
-const { Calculator } = require('./utils/calculator');
+const passport = require("passport");
+const path = require("path");
 
-const PORT = process.env.PORT || 5000;
+let PORT = process.env.PORT || 5000;
 
-const app = express(); 
+//=== 1 - CREATE APP
+// Creating express app and configuring middleware needed for authentication
+const app = express();
+
 app.use(cors());
 
+// for parsing application/json
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Handle GET requests to /api route
-app.post("/api/calculator", (req, res) => {
-    const { goals, assets, liabilities, monthlyRevenue, monthlyExpense } = req.body;
+// for parsing application/xwww-
+app.use(express.urlencoded({ extended: false }));
+//form-urlencoded
 
-    if (!goals) {
-        return res.status(422).json({
-            status : false,
-            message :'Goals is required.'
-        });
-    }
+//=== 2 - INITIALIZE PASSPORT MIDDLEWARE
+app.use(passport.initialize());
+require("./middlewares/jwt")(passport);
 
-    if (!assets) {
-        return res.status(422).json({
-            status : false,
-            message :'Assets is required.'
-        });
-    }
+//=== 3 - CONFIGURE ROUTES
+//Configure Route
+require('./routes/index')(app);
 
-    if (!liabilities) {
-        return res.status(422).json({
-            status : false,
-            message :'Liabilities is required.'
-        });
-    }
-
-    if (!monthlyRevenue) {
-        return res.status(422).json({
-            status : false,
-            message :'Monthly Revenue is required.'
-        });
-    }
-
-    if (!monthlyExpense) {
-        return res.status(422).json({
-            status : false,
-            message :'Monthly Expense is required.'
-        });
-    }
-
-    var calc = new Calculator(goals, assets, liabilities, monthlyRevenue, monthlyExpense);
-
-    return res.status(200).json({
-        status: true,
-        data: calc.getComputation()
-    });
-});
-
-app.get("/api/hello", (req, res) => {
-    return res.status(200).send("Hello World!");
-});
-
-// All other GET requests not handled before will return our React app
-app.get('*', (req, res) => {
-    return res.status(404).send("Page not found!");
-});
-
-app.listen(PORT, () => {
-    console.log(`Server listening on ${PORT}`);
-});
+//=== 4 - START SERVER
+app.listen(PORT, () => console.log('Server running on http://localhost:'+PORT+'/'));
