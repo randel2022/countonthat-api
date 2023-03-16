@@ -8,6 +8,10 @@ const router = express.Router();
 //INDEX
 router.get('/', User.index);
 
-//SHOW
-router.get('/:id',  User.show);
+// CALCULATE
+router.post('/calculator', User.calculator);
+
+// //SHOW
+// router.get('/:id',  User.show);
+
 module.exports = router;

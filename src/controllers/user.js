@@ -1,27 +1,55 @@
-const User = require('../models/user');
+const { Calculator } = require('../utils/calculator');
 
 
-// @route GET admin/user
-// @desc Returns all users
+// @route GET api/user
+// @desc Returns user details
 // @access Public
-exports.index = async function (req, res) {
-    // const users = await User.find({});
-    res.status(200).json({message: "nice"});
+exports.index = function (req, res) {
+    res.status(200).json({user: req.user});
 };
 
-// @route GET api/user/{id}
-// @desc Returns a specific user
-// @access Public
-exports.show = async function (req, res) {
-    try {
-        const id = req.params.id;
+exports.calculator = function (req, res) {
+    const { goals, assets, liabilities, monthlyRevenue, monthlyExpense } = req.body;
 
-        const user = await User.findById(id);
-
-        if (!user) return res.status(401).json({message: 'User does not exist'});
-
-        res.status(200).json({user});
-    } catch (error) {
-        res.status(500).json({message: error.message})
+    if (!goals) {
+        return res.status(422).json({
+            status : false,
+            message :'Goals is required.'
+        });
     }
+
+    if (!assets) {
+        return res.status(422).json({
+            status : false,
+            message :'Assets is required.'
+        });
+    }
+
+    if (!liabilities) {
+        return res.status(422).json({
+            status : false,
+            message :'Liabilities is required.'
+        });
+    }
+
+    if (!monthlyRevenue) {
+        return res.status(422).json({
+            status : false,
+            message :'Monthly Revenue is required.'
+        });
+    }
+
+    if (!monthlyExpense) {
+        return res.status(422).json({
+            status : false,
+            message :'Monthly Expense is required.'
+        });
+    }
+
+    var calc = new Calculator(goals, assets, liabilities, monthlyRevenue, monthlyExpense);
+
+    return res.status(200).json({
+        status: true,
+        data: calc.getComputation()
+    });
 };

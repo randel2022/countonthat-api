@@ -1,7 +1,7 @@
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
-const User = require('../models/user');
+const { User } = require('../models/user');
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -11,16 +11,25 @@ const opts = {
 module.exports = passport => {
     passport.use(
         new JwtStrategy(opts, (jwt_payload, done) => {
-            console.log(jwt_payload);
-            return done(null, {email: 'test@email.com', password: 'password'});
-            // User.findById(jwt_payload.id)
-            //     .then(user => {
-            //         if (user) return done(null, user);
-            //         return done(null, false);
-            //     })
-            //     .catch(err => {
-            //         return done(err, false, {message: 'Server Error'});
-            //     });
+            const temp = new User(jwt_payload.id, null, null, null, null);
+            temp.findById(
+                (results) => {
+                    if (results.length == 0) {
+                        return done(null, false);
+                    }
+                    const result = results[0];
+                    const user = {
+                        id: result.id,
+                        email: result.email,
+                        firstName: result.firstName,
+                        lastName: result.lastName
+                    };
+                    return done(null, user);
+                },
+                (message) => {
+                    return done(err, false, { message: message });
+                }
+            );
         })
     );
 };
