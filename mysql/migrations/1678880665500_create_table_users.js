@@ -1,4 +1,4 @@
 module.exports = {
-    "up": "CREATE TABLE users (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, email TEXT NOT NULL, password TEXT NOT NULL, firstName TEXT NOT NULL, lastName TEXT NOT NULL)",
+    "up": "CREATE TABLE users (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, email VARCHAR(45) NOT NULL UNIQUE, password TEXT NOT NULL, firstName TEXT NOT NULL, lastName TEXT NOT NULL, age INT, contact text)",
     "down": "DROP TABLE users"
 }

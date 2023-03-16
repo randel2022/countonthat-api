@@ -15,7 +15,7 @@ exports.register = (req, res) => {
                     return res.status(401).json({ message: 'The email address you have entered is already associated with another account.' });
                 }
 
-                newUser.save(
+                newUser.create(
                     (message) => {
                         return res.status(200).json({ success: true, message: message });
                     },

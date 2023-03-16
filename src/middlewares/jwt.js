@@ -15,15 +15,10 @@ module.exports = passport => {
             temp.findById(
                 (results) => {
                     if (results.length == 0) {
-                        return done(null, false);
+                        return done(null, false, {message: "User not found!"});
                     }
                     const result = results[0];
-                    const user = {
-                        id: result.id,
-                        email: result.email,
-                        firstName: result.firstName,
-                        lastName: result.lastName
-                    };
+                    const { password, ...user } = result;
                     return done(null, user);
                 },
                 (message) => {

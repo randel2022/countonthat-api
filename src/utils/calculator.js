@@ -1,6 +1,5 @@
 const { Item } = require('../models/item');
 const { YearlyValue } = require('../models/yearly-value');
-const { connection, insertGoals, insertAssets, insertLiabilities, insertRevenues, insertExpenses } = require('../database/database');
 
 class Calculator {
 
@@ -20,12 +19,10 @@ class Calculator {
         var totalLiabilities = this.computeListTotalValue(this.liabilities);
         var totalDream = this.computeListTotalValue(this.goals);
 
-        var financiallyTowardsDream = totalAssets / totalDream;
+        var financiallyTowardsDream = (totalAssets - totalLiabilities) / totalDream;
         var initial = new YearlyValue(
             assets, liabilities, monthlyRevenue, monthlyExpense, financiallyTowardsDream
         );
-
-        this.insertToDB();
 
         this.initial = initial;
         this.setYearOne();
@@ -36,13 +33,13 @@ class Calculator {
         var initialLiabilities = this.initial.liabilities;
 
         var monthlyRevenue = new Item(
-            undefined,
+            null,
             this.initial.monthlyRevenue.getNextValue(),
             this.initial.monthlyRevenue.multiplier
         );
 
         var monthlyExpense = new Item(
-            undefined,
+            null,
             this.initial.monthlyExpense.getNextValue(),
             this.initial.monthlyExpense.multiplier
         );
@@ -80,13 +77,13 @@ class Calculator {
         var newLiabilities = this.getListNextValues(prevLiabilities);
 
         var monthlyRevenue = new Item(
-            undefined,
+            null,
             data.monthlyRevenue.getNextValue(),
             data.monthlyRevenue.multiplier
         );
 
         var monthlyExpense = new Item(
-            undefined,
+            null,
             data.monthlyExpense.getNextValue(),
             data.monthlyExpense.multiplier
         );
@@ -156,22 +153,22 @@ class Calculator {
         return value;
     }
 
-    insertToDB() {
-        let userId = this.getRandomInt(1, 99999);
+    // insertToDB() {
+    //     let userId = this.getRandomInt(1, 99999);
 
-        insertGoals(connection, userId, this.goals);
-        insertAssets(connection, userId, this.assets);
-        insertLiabilities(connection, userId, this.liabilities);
-        insertRevenues(connection, userId, this.monthlyRevenue);
-        insertExpenses(connection, userId, this.monthlyExpense);
+    //     insertGoals(connection, userId, this.goals);
+    //     insertAssets(connection, userId, this.assets);
+    //     insertLiabilities(connection, userId, this.liabilities);
+    //     insertRevenues(connection, userId, this.monthlyRevenue);
+    //     insertExpenses(connection, userId, this.monthlyExpense);
 
-    }
+    // }
 
-    getRandomInt(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
-    }
+    // getRandomInt(min, max) {
+    //     min = Math.ceil(min);
+    //     max = Math.floor(max);
+    //     return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
+    // }
 }
 
 module.exports = {

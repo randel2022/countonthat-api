@@ -45,4 +45,19 @@ function findById(id, onSuccess, onFail) {
     );
 };
 
-module.exports = { createUser, findByEmail, findById };
+function updateUser(data, onSuccess, onFail) {
+    let sqlQuery = "UPDATE users SET ? WHERE id=?"
+    connection.query(
+        sqlQuery,
+        [{ ...data }, data.id],
+        (error, results) => {
+            if(error) {
+                onFail(error.message);
+            } else {
+                onSuccess(results);
+            }
+        }
+    );
+};
+
+module.exports = { createUser, findByEmail, findById, updateUser };

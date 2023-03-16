@@ -1,17 +1,19 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { createUser, findByEmail, findById } = require('../database/user');
+const { createUser, findByEmail, findById, updateUser} = require('../database/user');
 
 class User {
-    constructor(id, email, password, firstName, lastName) {
+    constructor(id, email, password, firstName, lastName, age, contact) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.age = age;
+        this.contact = contact;
     }
 
-    save = function (onSuccess, onFail) {
+    create = function (onSuccess, onFail) {
 
         const user = this;
 
@@ -41,6 +43,61 @@ class User {
                     (result) => {
                         user.id = result.insertId;
                         onSuccess("Created user successfully.");
+                    },
+                    onFail
+                );
+            });
+        });
+    };
+
+    update = function (onSuccess, onFail) {
+
+        const user = this;
+
+        if(!user.password) {
+            // const data = {
+            //     id: user.id,
+            //     firstName: user.firstName,
+            //     lastName: user.lastName
+            // };
+
+            const { email, password, ...data } = user;
+
+            updateUser(
+                data,
+                (result) => {
+                    onSuccess("Updated user successfully.");
+                },
+                onFail
+            );
+            return;
+        }
+
+        bcrypt.genSalt(10, function (err, salt) {
+            if (err) {
+                onFail(err.message);
+                return;
+            };
+
+            bcrypt.hash(user.password, salt, function (err, hash) {
+                if (err) {
+                    onFail(err.message);
+                    return;
+                }
+
+                user.password = hash;
+
+                const data = {
+                    id: user.id,
+                    password: user.password,
+                    firstName: user.firstName,
+                    lastName: user.lastName
+                };
+
+                updateUser(
+                    data,
+                    (result) => {
+                        onSuccess("Updated user successfully.");
                     },
                     onFail
                 );

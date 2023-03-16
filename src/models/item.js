@@ -6,7 +6,7 @@ class Item {
     }
 
     getNextValue() {
-        var data = this. value * (this.multiplier / 10)
+        // var data = this. value * (this.multiplier / 10)
 
         if(this.name?.toLowerCase() == 'cash') {
             return this.value
@@ -16,7 +16,7 @@ class Item {
             return 0
         }
 
-        return this.value + data
+        return this.value * this.multiplier
     }
 }
 
