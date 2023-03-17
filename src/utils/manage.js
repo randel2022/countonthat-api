@@ -59,7 +59,7 @@ function getUser(id, onSuccess, onFail) {
                 return;
             }
             const result = results[0];
-            const { password, ...user } = result;
+            const { password, resetPasswordToken, resetPasswordExpires, ...user } = result;
             onSuccess(user);
             return;
         },

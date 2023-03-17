@@ -34,7 +34,7 @@ exports.recover = async (req, res) => {
                 let subject = 'Password change request';
                 let to = user.email;
                 let from = '' + process.env.MAIL_FROM_NAME + ' <' + process.env.MAIL_FROM_ADDRESS + '>';
-                let link = "http://" + req.headers.host + "/reset/" + user.resetPasswordToken;
+                let link = "http://" + process.env.APP_URL + "/reset/" + user.resetPasswordToken;
                 let html = `<p>Hi ${user.firstName}</p>
                     <p>Please click on the following <a href="${link}">link</a> to reset your password.</p> 
                     <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>`;
