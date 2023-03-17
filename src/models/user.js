@@ -87,7 +87,9 @@ class User {
 
                 const data = {
                     id: user.id,
-                    password: user.password
+                    password: user.password,
+                    resetPasswordToken: null,
+                    resetPasswordExpires: null
                 };
 
                 updateUser(
