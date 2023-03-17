@@ -29,4 +29,4 @@ require("./middlewares/jwt")(passport);
 require('./routes/index')(app);
 
 //=== 4 - START SERVER
-app.listen(PORT, () => console.log('Server running on http://localhost:'+PORT+'/'));
+app.listen(PORT, () => console.log('Server running on http://localhost:' + PORT + '/'));

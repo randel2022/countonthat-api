@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { createUser, findByEmail, findById, updateUser} = require('../database/user');
+const crypto = require('crypto');
+const { createUser, findByEmail, findById, updateUser, findByResetToken } = require('../database/user');
 
 class User {
-    constructor(id, email, password, firstName, lastName, age, contact) {
+    constructor(id, email, password, firstName, lastName, age, contact, currency, resetPasswordToken, resetPasswordExpires) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -11,6 +12,9 @@ class User {
         this.lastName = lastName;
         this.age = age;
         this.contact = contact;
+        this.currency = currency;
+        this.resetPasswordToken = resetPasswordToken;
+        this.resetPasswordExpires = resetPasswordExpires;
     }
 
     create = function (onSuccess, onFail) {
@@ -51,27 +55,21 @@ class User {
     };
 
     update = function (onSuccess, onFail) {
+        const user = this;
+        const { email, password, resetPasswordToken, resetPasswordExpires, ...data } = user;
+
+        updateUser(
+            data,
+            (result) => {
+                onSuccess("Updated user successfully.");
+            },
+            onFail
+        );
+    };
+
+    updatePassword = function(newPassword, onSuccess, onFail) {
 
         const user = this;
-
-        if(!user.password) {
-            // const data = {
-            //     id: user.id,
-            //     firstName: user.firstName,
-            //     lastName: user.lastName
-            // };
-
-            const { email, password, ...data } = user;
-
-            updateUser(
-                data,
-                (result) => {
-                    onSuccess("Updated user successfully.");
-                },
-                onFail
-            );
-            return;
-        }
 
         bcrypt.genSalt(10, function (err, salt) {
             if (err) {
@@ -79,7 +77,7 @@ class User {
                 return;
             };
 
-            bcrypt.hash(user.password, salt, function (err, hash) {
+            bcrypt.hash(newPassword, salt, function (err, hash) {
                 if (err) {
                     onFail(err.message);
                     return;
@@ -89,9 +87,7 @@ class User {
 
                 const data = {
                     id: user.id,
-                    password: user.password,
-                    firstName: user.firstName,
-                    lastName: user.lastName
+                    password: user.password
                 };
 
                 updateUser(
@@ -104,6 +100,39 @@ class User {
             });
         });
     };
+
+    generatePasswordReset = function() {
+        this.resetPasswordToken = crypto.randomBytes(20).toString('hex');
+        this.resetPasswordExpires = Date.now() + 3600000;
+
+        const user = this;
+
+        const data = {
+            id: user.id,
+            resetPasswordToken: user.resetPasswordToken,
+            resetPasswordExpires: user.resetPasswordExpires
+        };
+
+        updateUser(
+            data,
+            (result) => {
+                console.log("Generated reset password token.");
+            },
+            (result) => {
+                console.error(result);
+            }
+        );
+    };
+
+    findByResetToken = function(onSuccess, onFail) {
+        const user = this;
+
+        findByResetToken(
+            user.resetPasswordToken,
+            onSuccess,
+            onFail
+        );
+    }
 
     findByEmail = function(onSuccess, onFail) {
         const user = this;

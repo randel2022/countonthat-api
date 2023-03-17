@@ -7,7 +7,7 @@ exports.register = (req, res) => {
     try {
         const { email, password, firstName, lastName } = req.body;
 
-        const newUser = new User(null, email, password, firstName, lastName);
+        const newUser = new User(null, email, password, firstName, lastName, null, null, null, null, null);
         newUser.findByEmail(
             (results) => {
 
@@ -40,29 +40,40 @@ exports.register = (req, res) => {
 exports.login = (req, res) => {
     try {
         const { email, password } = req.body;
-
-        const temp = new User(null, email, password, null, null);
+        const temp = new User(null, email, password, null, null, null, null, null, null, null);
         temp.findByEmail(
             (results) => {
-
                 if (results.length == 0) {
-                    return res.status(401).json({message: 'The email address ' + email + ' is not associated with any account. Double-check your email address and try again.'});
+                    return res.status(401).json({ message: 'The email address ' + email + ' is not associated with any account. Double-check your email address and try again.' });
                 }
-                //validate password
                 const result = results[0];
-                const user = new User(result.id, result.email, result.password, result.firstName, result.lastName);
-                if(!user.comparePassword(password)) {
-                    return res.status(401).json({message: 'Invalid email or password.'});
+                const user = new User(
+                    result.id,
+                    result.email,
+                    result.password,
+                    result.firstName,
+                    result.lastName,
+                    result.age,
+                    result.contact,
+                    result.currency,
+                    result.resetPasswordToken,
+                    result.resetPasswordExpires
+                );
+                if (!user.comparePassword(password)) {
+                    return res.status(401).json({ message: 'Invalid email or password.' });
                 }
 
-                return res.status(200).json({ 
+                return res.status(200).json({
                     token: user.generateJWT(),
                     user: {
-                        id: user.id,
-                        email: user.email,
-                        firstName: user.firstName,
-                        lastName: user.lastName
-                    } 
+                        id: result.id,
+                        email: result.email,
+                        firstName: result.firstName,
+                        lastName: result.lastName,
+                        age: result.age,
+                        contact: result.contact,
+                        currency: result.currency
+                    }
                 });
 
             },

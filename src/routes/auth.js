@@ -25,11 +25,14 @@ router.post("/login", [
     check('password').not().isEmpty(),
 ], validate, Auth.login);
 
-router.post('/reset/:token', [
+router.post('/recover', [
+    check('email').isEmail().withMessage('Enter a valid email address'),
+], validate, Password.recover);
+
+router.post('/reset', [
+    check('token').not().isEmpty().withMessage('token is required'),
     check('password').not().isEmpty().isLength({min: 6}).withMessage('Must be at least 6 chars long'),
     check('confirmPassword', 'Passwords do not match').custom((value, {req}) => (value === req.body.password)),
 ], validate, Password.resetPassword);
-
-// router.get('/reset/:token', Password.reset);
 
 module.exports = router;

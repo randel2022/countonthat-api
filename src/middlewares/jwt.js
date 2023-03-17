@@ -11,14 +11,14 @@ const opts = {
 module.exports = passport => {
     passport.use(
         new JwtStrategy(opts, (jwt_payload, done) => {
-            const temp = new User(jwt_payload.id, null, null, null, null);
+            const temp = new User(jwt_payload.id, null, null, null, null, null, null, null, null , null);
             temp.findById(
                 (results) => {
                     if (results.length == 0) {
                         return done(null, false, {message: "User not found!"});
                     }
                     const result = results[0];
-                    const { password, ...user } = result;
+                    const { password, resetPasswordToken, resetPasswordExpires, ...user } = result;
                     return done(null, user);
                 },
                 (message) => {

@@ -60,4 +60,20 @@ function updateUser(data, onSuccess, onFail) {
     );
 };
 
-module.exports = { createUser, findByEmail, findById, updateUser };
+function findByResetToken(resetPasswordToken, onSuccess, onFail) {
+    console.log(1678969824937 < Date.now());
+    let sqlQuery = "SELECT * FROM users WHERE resetPasswordToken=? AND resetPasswordExpires>?"
+    connection.query(
+        sqlQuery,
+        [resetPasswordToken, Date.now()],
+        (error, results) => {
+            if(error) {
+                onFail(error.message);
+            } else {
+                onSuccess(results);
+            }
+        }
+    );
+};
+
+module.exports = { createUser, findByEmail, findById, updateUser, findByResetToken };
