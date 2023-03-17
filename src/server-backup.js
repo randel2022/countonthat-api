@@ -1,12 +1,6 @@
-import express from "express";
-import cors from "cors";
-import { resolve } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import { Calculator } from "./calculator.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const express = require('express');
+const cors = require('cors');
+const { Calculator } = require('./utils/calculator');
 
 const PORT = process.env.PORT || 5000;
 
@@ -15,7 +9,6 @@ app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(resolve(__dirname, '../build')));
 
 // Handle GET requests to /api route
 app.post("/api/calculator", (req, res) => {
