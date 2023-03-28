@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 
 //=== 2 - INITIALIZE PASSPORT MIDDLEWARE
 app.use(passport.initialize());
-require("./middlewares/jwt")(passport);
+require("./middlewares/strategies")(passport);
 
 //=== 3 - CONFIGURE ROUTES
 //Configure Route

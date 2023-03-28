@@ -1,10 +1,13 @@
 
 const express = require('express');
 const {check} = require('express-validator');
+const passport = require('passport');
 
 const Auth = require('../controllers/auth');
 const Password = require('../controllers/password');
 const validate = require('../middlewares/validate');
+
+const authenticate = require('../middlewares/authenticate-fb');
 
 const router = express.Router();
 
@@ -34,5 +37,8 @@ router.post('/reset', [
     check('password').not().isEmpty().isLength({min: 6}).withMessage('Must be at least 6 chars long'),
     check('confirmPassword', 'Passwords do not match').custom((value, {req}) => (value === req.body.password)),
 ], validate, Password.resetPassword);
+
+router.get('/facebook', authenticate);
+router.get('/facebook/callback', authenticate, Auth.fbLogin);
 
 module.exports = router;

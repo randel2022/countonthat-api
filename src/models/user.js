@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const { createUser, findByEmail, findById, updateUser, findByResetToken } = require('../database/user');
 
 class User {
-    constructor(id, email, password, firstName, lastName, age, contact, currency, resetPasswordToken, resetPasswordExpires) {
+    constructor(id, email, password, firstName, lastName, age, contact, currency, type, resetPasswordToken, resetPasswordExpires) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -13,6 +13,7 @@ class User {
         this.age = age;
         this.contact = contact;
         this.currency = currency;
+        this.type = type;
         this.resetPasswordToken = resetPasswordToken;
         this.resetPasswordExpires = resetPasswordExpires;
     }
@@ -39,7 +40,8 @@ class User {
                     email: user.email,
                     password: user.password,
                     firstName: user.firstName,
-                    lastName: user.lastName
+                    lastName: user.lastName,
+                    type: user.type
                 };
 
                 createUser(
@@ -52,6 +54,28 @@ class User {
                 );
             });
         });
+    };
+
+    createFB = function (onSuccess, onFail) {
+
+        const user = this;
+
+        const data = {
+            email: user.email,
+            password: 'fb',
+            firstName: user.firstName,
+            lastName: user.lastName,
+            type: user.type
+        };
+
+        createUser(
+            data,
+            (result) => {
+                user.id = result.insertId;
+                onSuccess("Created user successfully.");
+            },
+            onFail
+        );
     };
 
     update = function (onSuccess, onFail) {
@@ -67,7 +91,7 @@ class User {
         );
     };
 
-    updatePassword = function(newPassword, onSuccess, onFail) {
+    updatePassword = function (newPassword, onSuccess, onFail) {
 
         const user = this;
 
@@ -103,7 +127,7 @@ class User {
         });
     };
 
-    generatePasswordReset = function() {
+    generatePasswordReset = function () {
         this.resetPasswordToken = crypto.randomBytes(20).toString('hex');
         this.resetPasswordExpires = Date.now() + 3600000;
 
@@ -126,7 +150,7 @@ class User {
         );
     };
 
-    findByResetToken = function(onSuccess, onFail) {
+    findByResetToken = function (onSuccess, onFail) {
         const user = this;
 
         findByResetToken(
@@ -136,7 +160,7 @@ class User {
         );
     }
 
-    findByEmail = function(onSuccess, onFail) {
+    findByEmail = function (onSuccess, onFail) {
         const user = this;
 
         findByEmail(
@@ -145,8 +169,8 @@ class User {
             onFail
         );
     };
-    
-    findById = function(onSuccess, onFail) {
+
+    findById = function (onSuccess, onFail) {
         const user = this;
 
         findById(
@@ -156,7 +180,7 @@ class User {
         );
     };
 
-    comparePassword = function(password) {
+    comparePassword = function (password) {
         return bcrypt.compareSync(password, this.password);
     }
 

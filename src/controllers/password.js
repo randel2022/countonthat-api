@@ -8,7 +8,7 @@ exports.recover = async (req, res) => {
     try {
         const { email } = req.body;
 
-        const temp = new User(null, email, null, null, null, null, null, null);
+        const temp = new User(null, email, null, null, null, null, null, null, null, null, null);
 
         temp.findByEmail(
             async (results) => {
@@ -16,6 +16,11 @@ exports.recover = async (req, res) => {
                     return res.status(401).json({ message: 'The email address ' + email + ' is not associated with any account. Double-check your email address and try again.' });
                 }
                 const result = results[0];
+
+                if (result.type?.toLowerCase() !== 'email') {
+                    return res.status(401).json({ message: 'The email address ' + email + ' is registered with ' + result.type + '. Please login using ' + result.type + '.' });
+                }
+
                 const user = new User(
                     result.id,
                     result.email,
@@ -25,6 +30,7 @@ exports.recover = async (req, res) => {
                     result.age,
                     result.contact,
                     result.currency,
+                    result.type,
                     result.reresetPasswordToken,
                     result.resetPasswordExpires
                 );
@@ -64,7 +70,7 @@ exports.recover = async (req, res) => {
 exports.resetPassword = async (req, res) => {
     try {
         const { token, password } = req.body;
-        const temp = new User(null, null, null, null, null, null, null, null, token, null);
+        const temp = new User(null, null, null, null, null, null, null, null, null, token, null);
         temp.findByResetToken(
             (results) => {
                 if (results.length == 0) {
@@ -80,6 +86,7 @@ exports.resetPassword = async (req, res) => {
                     result.age,
                     result.contact,
                     result.currency,
+                    result.type,
                     result.reresetPasswordToken,
                     result.resetPasswordExpires
                 );
