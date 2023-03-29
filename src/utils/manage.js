@@ -51,7 +51,7 @@ function updateUser(user) {
 };
 
 function getUser(id, onSuccess, onFail) {
-    const temp = new User(id, null, null, null, null, null, null, null, null, null);
+    const temp = new User(id, null, null, null, null, null, null, null, null, null, null);
     temp.findById(
         (results) => {
             if (results.length == 0) {
