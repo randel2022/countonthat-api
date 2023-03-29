@@ -144,8 +144,8 @@ exports.fbLogin = (req, res) => {
                         type: result.type
                     };
 
-                    res.cookie('token', token);
-                    res.cookie('user', userVal);
+                    res.cookie('token', token, { domain: process.env.APP_DOMAIN, secure: true, httpOnly:false });
+                    res.cookie('user', userVal, { domain: process.env.APP_DOMAIN, secure: true, httpOnly:false });
                     return res.redirect(process.env.APP_URL);
                 } else {
                     newUser.createFB(
@@ -177,8 +177,8 @@ exports.fbLogin = (req, res) => {
                                 type: newUser.type
                             }
 
-                            res.cookie('token', token);
-                            res.cookie('user', user);
+                            res.cookie('token', token, { domain: process.env.APP_DOMAIN, secure: true, httpOnly:false });
+                            res.cookie('user', user, { domain: process.env.APP_DOMAIN, secure: true, httpOnly:false });
                             return res.redirect(process.env.APP_URL);
                         },
                         (message) => {
