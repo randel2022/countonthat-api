@@ -12,7 +12,7 @@ const opts = {
 const fbOpts = {
     clientID: process.env.FB_ID,
     clientSecret: process.env.FB_SECRET,
-    callbackURL: "/api/auth/facebook/callback",
+    callbackURL: process.env.APP_API_URL + "/auth/facebook/callback",
     profileFields: ['emails', 'name']
 };
 

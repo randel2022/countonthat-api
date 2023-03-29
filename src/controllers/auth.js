@@ -146,7 +146,7 @@ exports.fbLogin = (req, res) => {
 
                     res.cookie('token', token);
                     res.cookie('user', userVal);
-                    return res.redirect("http://" + process.env.APP_URL);
+                    return res.redirect(process.env.APP_URL);
                 } else {
                     newUser.createFB(
                         (message) => {
@@ -179,23 +179,23 @@ exports.fbLogin = (req, res) => {
 
                             res.cookie('token', token);
                             res.cookie('user', user);
-                            return res.redirect("http://" + process.env.APP_URL);
+                            return res.redirect(process.env.APP_URL);
                         },
                         (message) => {
                             // return res.status(500).json({ message: message });
-                            return res.redirect("http://" + process.env.APP_URL + '?e=' + encodeURIComponent(message));
+                            return res.redirect(process.env.APP_URL + '?e=' + encodeURIComponent(message));
                         }
                     );
                 }
             },
             (message) => {
                 // return res.status(500).json({ message: message });
-                return res.redirect("http://" + process.env.APP_URL + '?e=' + encodeURIComponent(message));
+                return res.redirect(process.env.APP_URL + '?e=' + encodeURIComponent(message));
             }
         );
 
     } catch (error) {
         // return res.status(500).json({ message: error.message });
-        return res.redirect("http://" + process.env.APP_URL + '?e=' + encodeURIComponent(message));
+        return res.redirect(process.env.APP_URL + '?e=' + encodeURIComponent(message));
     }
 };
