@@ -182,8 +182,8 @@ exports.fbLogin = (req, res) => {
                             return res.redirect(process.env.APP_URL);
                         },
                         (message) => {
-                            // return res.status(500).json({ message: message });
-                            return res.redirect(process.env.APP_URL + '?e=' + encodeURIComponent(message));
+                            return res.status(500).json({ message: req.user._json });
+                            // return res.redirect(process.env.APP_URL + '?e=' + encodeURIComponent(message));
                         }
                     );
                 }
@@ -195,7 +195,7 @@ exports.fbLogin = (req, res) => {
         );
 
     } catch (error) {
-        // return res.status(500).json({ message: error.message });
-        return res.redirect(process.env.APP_URL + '?e=' + encodeURIComponent(message));
+        return res.status(505).json({ message: req.user._json });
+        // return res.redirect(process.env.APP_URL + '?e=' + encodeURIComponent(message));
     }
 };
