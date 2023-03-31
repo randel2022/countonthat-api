@@ -73,6 +73,17 @@ class Calculator {
         var prevLiabilities = data.liabilities;
 
         var newAssets = this.getListNextValues(prevAssets);
+
+        //check if cash is available in assets
+        var cash = newAssets.find(item => {
+            return item.name.toLowerCase() === 'cash'
+        });
+
+        if(!cash) {
+            var newItem = new Item('cash', 0, 1);
+            newAssets.push(newItem);
+        }
+        
         this.addToCash(newAssets, data.annualNet);
         var newLiabilities = this.getListNextValues(prevLiabilities);
 
